@@ -80,11 +80,7 @@ void MainWindow::on_OpenFile_triggered()
             ui->Layers->setEnabled(true);
              ui->fileName->setEnabled(true);
             ui->sizeL->setText(QString::number(img.width())+"x"+QString::number(img.height()));
-
-
-
             ui->graphicsView->setScene(graphic);
-
         }
 }
 
@@ -121,4 +117,25 @@ void MainWindow::on_Layers_currentIndexChanged(int index)
     emp->clear();
     emp->addPixmap(QPixmap::fromImage(scaledLayer(img,2,index)));
     ui->graphicsView->setScene(emp);
+}
+
+void MainWindow::on_closeCurFile_triggered()
+{
+    if(!ui->fileName->isEnabled() || ui->fileName->count()==0)
+        return;
+    ui->fileName->setEnabled(false);
+    imgPair.remove(ui->fileName->currentText());
+    ui->fileName->removeItem(ui->fileName->currentIndex());
+    img = imgPair.value(ui->fileName->currentText());
+    QGraphicsScene *emp = ui->graphicsView->scene();
+    emp->clear();
+    emp->addPixmap(QPixmap::fromImage(img));
+    ui->graphicsView->setScene(emp);
+    ui->Layers->setEnabled(false);
+    ui->Layers->clear();
+    fill_ComboLayers();
+    ui->Layers->setCurrentIndex(0);
+    ui->Layers->setEnabled(true);
+    ui->fileName->setEnabled(true);
+    ui->sizeL->setText(QString::number(img.width())+"x"+QString::number(img.height()));
 }

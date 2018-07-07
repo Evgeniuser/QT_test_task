@@ -25,6 +25,8 @@ private slots:
 
    void on_fileName_currentTextChanged(const QString &arg1);
 
+   void on_closeCurFile_triggered();
+
 private:
     Ui::MainWindow *ui;
     QImage img;

@@ -138,6 +138,7 @@
      <string>Файл</string>
     </property>
     <addaction name="OpenFile"/>
+    <addaction name="closeCurFile"/>
     <addaction name="Exit"/>
    </widget>
    <addaction name="menu"/>
@@ -158,6 +159,11 @@
   <action name="Exit">
    <property name="text">
     <string>Выход</string>
+   </property>
+  </action>
+  <action name="closeCurFile">
+   <property name="text">
+    <string>Закрыть текущий файл</string>
    </property>
   </action>
  </widget>
