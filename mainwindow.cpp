@@ -1,7 +1,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QFileDialog>
+#include <QMap>
 
+QMap<QString,QImage> imgPair;
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -65,14 +67,18 @@ void MainWindow::on_OpenFile_triggered()
         else
         {
             ui->Layers->setEnabled(false);
+            ui->fileName->setEnabled(false);
             QGraphicsScene *graphic = new QGraphicsScene(this);
             img.load(path);
+            imgPair.insert(path,img);
             ui->fileName->addItem(path);
+            ui->fileName->setCurrentText(path);
             ui->Layers->clear();
             graphic->addPixmap(QPixmap::fromImage(img));
             fill_ComboLayers();
             ui->Layers->setCurrentIndex(0);
             ui->Layers->setEnabled(true);
+             ui->fileName->setEnabled(true);
             ui->sizeL->setText(QString::number(img.width())+"x"+QString::number(img.height()));
 
 
@@ -87,11 +93,32 @@ void MainWindow::on_Exit_triggered()
    MainWindow::close();
 }
 
+void MainWindow::on_fileName_currentTextChanged(const QString &arg1)
+{
+    if(!ui->fileName->isEnabled())
+        return;
+    ui->Layers->setEnabled(false);
+    ui->Layers->clear();
+    img = imgPair.value(arg1);
+
+    QGraphicsScene *emp = ui->graphicsView->scene();
+    emp->clear();
+    emp->addPixmap(QPixmap::fromImage(img));
+
+    ui->graphicsView->setScene(emp);
+    fill_ComboLayers();
+    ui->Layers->setCurrentIndex(0);
+    ui->Layers->setEnabled(true);
+    ui->fileName->setEnabled(true);
+    ui->sizeL->setText(QString::number(img.width())+"x"+QString::number(img.height()));
+}
+
 void MainWindow::on_Layers_currentIndexChanged(int index)
 {
     if(!ui->Layers->isEnabled())
         return;
     QGraphicsScene *emp = ui->graphicsView->scene();
+    emp->clear();
     emp->addPixmap(QPixmap::fromImage(scaledLayer(img,2,index)));
     ui->graphicsView->setScene(emp);
 }

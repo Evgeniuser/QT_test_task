@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <map>
 
 namespace Ui {
 class MainWindow;
@@ -21,6 +22,8 @@ private slots:
     void on_Exit_triggered();
 
    void on_Layers_currentIndexChanged(int index);
+
+   void on_fileName_currentTextChanged(const QString &arg1);
 
 private:
     Ui::MainWindow *ui;
