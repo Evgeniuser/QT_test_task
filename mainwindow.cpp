@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include <QFileDialog>
 #include <QMap>
+#include <math.h>
 
 QMap<QString,QImage> imgPair;
 MainWindow::MainWindow(QWidget *parent) :
@@ -25,9 +26,9 @@ QImage MainWindow::scaledLayer(QImage _img,float s, int l)
      ui->sizeL->setText(QString::number(_img.width())+"x"+QString::number(_img.height()));
      return _img;
     }
-    _img = _img.scaled(_img.width()/(s*l),_img.height()/(s*l));
+    _img = _img.scaled(_img.width()/pow(s,l),_img.height()/pow(s,l));
     ui->sizeL->setText(QString::number(_img.width())+"x"+QString::number(_img.height()));
-    _img = _img.scaled(_img.width()*(s*l),_img.height()*(s*l));
+    _img = _img.scaled(img.width(),img.height());
     return _img;
 }
 
