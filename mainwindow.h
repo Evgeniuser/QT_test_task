@@ -30,7 +30,9 @@ private slots:
 private:
     Ui::MainWindow *ui;
     QImage img;
-
+    void sortMap(QString curInd);
+    QString getName(QString path);
+    long cDiag(QImage _img);
     void MainWindow::fill_ComboLayers();
     QImage scaledLayer(QImage _img, float s, int l);
     int MainWindow::countLayers(QImage _img, float s);

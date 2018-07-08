@@ -3,14 +3,18 @@
 #include <QFileDialog>
 #include <QMap>
 #include <math.h>
+#include <iostream>
+#include <QStringList>
 
 QMap<QString,QImage> imgPair;
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     ui->Layers->setEnabled(false);
+    ui->menuBar->setVisible(false);
 
 }
 
@@ -61,7 +65,7 @@ void MainWindow::fill_ComboLayers()
 
 void MainWindow::on_OpenFile_triggered()
 {
-    QString path = QFileDialog::getOpenFileName(this,"Open File","","*.png *.jpg *.jpeg *.gif *.bmp");
+    QString path = QFileDialog::getOpenFileName(this,"Open File","","*.png *.jpg *.jpeg");
 
         if(path.isEmpty())
             return;
@@ -71,17 +75,19 @@ void MainWindow::on_OpenFile_triggered()
             ui->fileName->setEnabled(false);
             QGraphicsScene *graphic = new QGraphicsScene(this);
             img.load(path);
-            imgPair.insert(path,img);
-            ui->fileName->addItem(path);
-            ui->fileName->setCurrentText(path);
+            QString name = getName(path);
+            imgPair.insert(name,img);
+            sortMap(name);
+            //ui->fileName->setCurrentText(name);
             ui->Layers->clear();
             graphic->addPixmap(QPixmap::fromImage(img));
             fill_ComboLayers();
             ui->Layers->setCurrentIndex(0);
             ui->Layers->setEnabled(true);
-             ui->fileName->setEnabled(true);
+            ui->fileName->setEnabled(true);
             ui->sizeL->setText(QString::number(img.width())+"x"+QString::number(img.height()));
             ui->graphicsView->setScene(graphic);
+
         }
 }
 
@@ -94,6 +100,7 @@ void MainWindow::on_fileName_currentTextChanged(const QString &arg1)
 {
     if(!ui->fileName->isEnabled())
         return;
+
     ui->Layers->setEnabled(false);
     ui->Layers->clear();
     img = imgPair.value(arg1);
@@ -134,9 +141,60 @@ void MainWindow::on_closeCurFile_triggered()
     ui->graphicsView->setScene(emp);
     ui->Layers->setEnabled(false);
     ui->Layers->clear();
+    if(ui->fileName->currentIndex()==-1)
+    {
+        ui->sizeL->setText(QString::number(img.width())+"x"+QString::number(img.height()));
+        return;
+    }
     fill_ComboLayers();
     ui->Layers->setCurrentIndex(0);
     ui->Layers->setEnabled(true);
     ui->fileName->setEnabled(true);
-    ui->sizeL->setText(QString::number(img.width())+"x"+QString::number(img.height()));
+}
+
+void MainWindow::sortMap(QString curInd)
+{
+    QStringList imgName;
+    QMap<QString, QImage>::const_iterator i = imgPair.constBegin();
+    while (i != imgPair.constEnd()) {
+        if(imgName.empty())
+            imgName.insert(0,i.key());
+        else
+        {
+            QString str_temp = i.key();
+            long temp,sorce;
+            int flg = 0;
+            for(int j = 0; j<imgName.size();j++)
+            {
+                temp = cDiag(imgPair.value(imgName.value(j)));
+                sorce = cDiag(imgPair.value(str_temp));
+                if(temp>sorce || temp==sorce)
+                {
+                    imgName.insert(j,str_temp);
+                    flg = 1;
+                    break;
+                }
+            }
+            if(flg == 0)
+                imgName.insert(imgName.size(),str_temp);
+        }
+        ++i;
+    }
+    ui->fileName->setEnabled(false);
+    ui->fileName->clear();
+    ui->fileName->addItems(imgName);
+    ui->fileName->setCurrentText(curInd);
+    ui->fileName->setEnabled(true);
+}
+
+long MainWindow::cDiag(QImage _img)
+{
+    return sqrt(pow(_img.height(),2)+pow(_img.width(),2));
+}
+
+QString MainWindow::getName(QString path)
+{
+    QStringList list = path.split('\/');
+    QString del = list.last();
+    return del;
 }

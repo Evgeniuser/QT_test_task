@@ -137,9 +137,6 @@
     <property name="title">
      <string>Файл</string>
     </property>
-    <addaction name="OpenFile"/>
-    <addaction name="closeCurFile"/>
-    <addaction name="Exit"/>
    </widget>
    <addaction name="menu"/>
   </widget>
@@ -150,6 +147,9 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="OpenFile"/>
+   <addaction name="closeCurFile"/>
+   <addaction name="Exit"/>
   </widget>
   <action name="OpenFile">
    <property name="text">
